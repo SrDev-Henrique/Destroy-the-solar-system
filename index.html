@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema Solar</title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <!-- <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161/examples/jsm/"
+        }
+      }
+    </script> -->
+  </head>
+  <body>
+
+    <section id="top-nav" >
+      <nav class="sim-actions">
+        <ul class="actions">
+          <div class="border">
+            <li class="info labeled">
+            <button onclick="openObjInfo()" id="infobtn" type="button">
+              <i class='bx bx-planet'></i>
+            </button>
+            <div class="label">
+                Detalhes
+              </div>
+          </li>
+          </div>
+
+          <div class="border">
+            <li class="add labeled">
+            <button onclick="addBodyForm()" id="addbtn" type="button">
+              <i class='bx bxs-message-square-add'></i>
+            </button>
+            <div class="label">
+                Adicionar
+              </div>
+          </li>
+          </div>
+
+          <div class="border">
+            <li>
+            <button
+            onclick="updatePlanetVelocities()"
+            class="destabilize"
+            type="button"
+          >
+              <p>Desestabilizar</p>
+            </button>
+          </li>
+          </div>
+
+          <li>
+            <button onclick="destroySystem()" class="destroy" type="button">
+              <p>Destruir</p>
+            </button>
+          </li>
+          
+      </nav>
+    </section>
+
+    <div class="call-options">
+      <p class="option-p">Opções</p>
+      <p class="close-options">X</p>
+    </div>
+
+    <section class="add-menu">
+      <div class="bodies-selection">
+        
+      </div>
+    </section>
+    <script src="src/scripts/script.js"></script>
+    <script type="module" src="src/scripts/main.js"></script>
+  </body>
+</html>
