@@ -8,7 +8,7 @@ import getStarfield from "./getStarfield.js";
 import getPlanet from "./getPlanet.js";
 import getAsteroidBelt from "./getAsteroidBelt.js";
 import getElipticLines from "./getElipticLines.js";
-// import cubeTexture from "./background.js"
+import cubeTexture from "./background.js"
 import "../styles/main.scss";
 
 const w = window.innerWidth;
@@ -37,6 +37,7 @@ function initScene(data) {
     });
   };
   scene.add(solarSystem);
+  scene.background = cubeTexture;
 
   const sun = getSun();
   solarSystem.add(sun);
