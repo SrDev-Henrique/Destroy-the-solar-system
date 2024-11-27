@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { getFresnelMat } from "./getFresnelMat.js";
-import { getPlanetShader } from "./getPlanetShader.js";
+// import { getPlanetShader } from "./getPlanetShader.js";
 
 const texLoader = new THREE.TextureLoader();
 const geo = new THREE.IcosahedronGeometry(1, 16);
@@ -14,18 +14,22 @@ function getPlanet({
   size = 1,
   color1 = 0xffffff,
   color2 = 0x000000,
-  damageTexture = "", 
+  // damageTexture = "", 
+  specularMap = "",
+  bumpMap = "",
+  bumpScale = 0.05,
+  alphaMap = "",
 }) {
   const orbitGroup = new THREE.Group();
   orbitGroup.rotation.y = Math.PI * 180 / 2;
 
   const path = `./textures/${img}`;
-  const baseTexture = texLoader.load(path);
-  const damageMap = damageTexture ? texLoader.load(`./textures/damage/${damageTexture}`) : null;
-
-  const planetMat = getPlanetShader({
-    baseTexture,
-    damageTexture: damageMap,
+  const map = texLoader.load(path);
+  const planetMat = new THREE.MeshPhongMaterial({
+    map,
+    specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
+    bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
+    bumpScale: bumpScale ? bumpScale : null,
   });
 
   const planet = new THREE.Mesh(geo, planetMat);
@@ -39,8 +43,6 @@ function getPlanet({
     const firstMat = new THREE.MeshStandardMaterial({
       map: texLoader.load(`./textures/mesh/${mesh1}`),
       blending: THREE.AdditiveBlending,
-      transparent: true,
-      opacity: 0.8,
     });
     const firstMesh = new THREE.Mesh(geo, firstMat);
     firstMesh.scale.setScalar(1.001);
@@ -53,6 +55,7 @@ function getPlanet({
       blending: THREE.AdditiveBlending,
       transparent: true,
       opacity: 0.8,
+      alphaMap: alphaMap ? texLoader.load(`./textures/alpha-map${alphaMap}`) : null,
     });
     const secondMesh = new THREE.Mesh(geo, secondMat);
     secondMesh.scale.setScalar(1.003);
