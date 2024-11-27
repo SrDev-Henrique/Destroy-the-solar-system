@@ -18,7 +18,8 @@ const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
 camera.position.set(0, 2.5, 1);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
-// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 document.body.appendChild(renderer.domElement);
 
 // const wireMat = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true});
@@ -39,8 +40,8 @@ function initScene(data) {
   scene.add(solarSystem);
   scene.background = cubeTexture;
 
-  const sun = getSun();
-  solarSystem.add(sun);
+  // const sun = getSun();
+  // solarSystem.add(sun);
 
   // const mercury = getPlanet({ size: 0.1, distance: 100.25, img: "mercury.png" });
   // solarSystem.add(mercury);
@@ -51,16 +52,28 @@ function initScene(data) {
   const moon = getPlanet({ size: 0.075, distance: 4, img: "moon.png" });
   const earth = getPlanet({
     children: [moon],
-    distance: -5,
+    distance: 0,
     img: "earth.jpg",
-    // mesh1: "03_earthlights1k.jpg",
-    // mesh2: "04_earthcloudmap.jpg",
+    mesh1: "03_earthlights1k.jpg",
+    mesh2: "04_earthcloudmap.jpg",
     size: 1.25,
     color1: 0x0088ff,
     color2: 0x000000,
+    specularMap: "02_earthspec1k.jpg",
+    bumpMap: "01_earthbump1k.jpg",
+    bumpScale: 0.05,
+    alphaMap: "05_earthcloudmaptrans.jpg",
+    shininess: 10,
     // damageTexture: "earth_damaged.jpg",
   });
   solarSystem.add(earth);
+
+  earth.traverse((node) => {
+    if (node.isMesh) {
+      const tex = node.material.map;
+      if (tex) tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    }
+  });
 
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
 
@@ -147,9 +160,16 @@ function initScene(data) {
   const starfield = getStarfield({ numStars: 2000, size: 0.35 });
   scene.add(starfield);
 
-  // const dirLight = new THREE.PointLight(0xffff99, 100);
-  // dirLight.position.set(-10, 0.5, 0);
+  // const dirLight = new THREE.PointLight(0xffffff, 2.0);
+  // dirLight.position.set(-3, 0.5, 1.5);
   // scene.add(dirLight);
+
+  // const light = new THREE.AmbientLight(0xffffff, 0.005);
+  // scene.add(light);
+
+  const sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
+  sunLight.position.set(-2, 0.5, 1.5);
+  scene.add(sunLight);
 
   // const nebula = getNebula({
   //   hue: 0.6,

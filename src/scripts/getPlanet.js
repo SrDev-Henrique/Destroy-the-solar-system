@@ -17,11 +17,12 @@ function getPlanet({
   // damageTexture = "", 
   specularMap = "",
   bumpMap = "",
-  bumpScale = 0.05,
+  bumpScale = 0.0,
   alphaMap = "",
+  shininess = 0,
 }) {
   const orbitGroup = new THREE.Group();
-  orbitGroup.rotation.y = Math.PI * 180 / 2;
+  orbitGroup.rotation.y = (Math.PI * 1.5) * 180 / 2;
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
@@ -30,6 +31,7 @@ function getPlanet({
     specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
     bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
     bumpScale: bumpScale ? bumpScale : null,
+    shininess: shininess ? shininess : null,
   });
 
   const planet = new THREE.Mesh(geo, planetMat);
@@ -40,26 +42,33 @@ function getPlanet({
   planet.position.z = Math.sin(startAngle) * distance;
 
   if (mesh1) {
-    const firstMat = new THREE.MeshStandardMaterial({
+    const firstMat = new THREE.MeshBasicMaterial({
       map: texLoader.load(`./textures/mesh/${mesh1}`),
       blending: THREE.AdditiveBlending,
+      depthWrite: false,
     });
     const firstMesh = new THREE.Mesh(geo, firstMat);
     firstMesh.scale.setScalar(1.001);
+    firstMesh.renderOrder = 1;
     planet.add(firstMesh);
+    console.log(mesh1)
   }
 
   if (mesh2) {
     const secondMat = new THREE.MeshStandardMaterial({
       map: texLoader.load(`./textures/mesh/${mesh2}`),
-      blending: THREE.AdditiveBlending,
       transparent: true,
       opacity: 0.8,
-      alphaMap: alphaMap ? texLoader.load(`./textures/alpha-map${alphaMap}`) : null,
+      blending: THREE.AdditiveBlending,
+      alphaMap: alphaMap
+        ? texLoader.load(`./textures/alpha-map${alphaMap}`)
+        : null,
     });
     const secondMesh = new THREE.Mesh(geo, secondMat);
     secondMesh.scale.setScalar(1.003);
+    secondMesh.renderOrder = 2;
     planet.add(secondMesh);
+    console.log(mesh2)
   }
 
   const planetRimMat = getFresnelMat({
