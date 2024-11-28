@@ -1,5 +1,9 @@
+/* eslint-disable no-unused-vars */
 import * as THREE from "three";
 import { getFresnelMat } from "./getFresnelMat.js";
+import { vertexShader } from "../shaders/planetVertex.glsl.js";
+import { fragmentShader } from "../shaders/planetFragment.glsl.js";
+
 // import { getPlanetShader } from "./getPlanetShader.js";
 
 const texLoader = new THREE.TextureLoader();
@@ -26,12 +30,12 @@ function getPlanet({
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.MeshPhongMaterial({
-    map,
-    specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
-    bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
-    bumpScale: bumpScale ? bumpScale : null,
-    shininess: shininess ? shininess : null,
+  const planetMat = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms: {
+      uTime: { value: 0.0 }, // Mesmo que não seja usado agora
+    },
   });
 
   const planet = new THREE.Mesh(geo, planetMat);

@@ -53,9 +53,9 @@ function initScene(data) {
   const earth = getPlanet({
     children: [moon],
     distance: 0,
-    img: "earth.jpg",
-    mesh1: "03_earthlights1k.jpg",
-    mesh2: "04_earthcloudmap.jpg",
+    // img: "earth.jpg",
+    // mesh1: "03_earthlights1k.jpg",
+    // mesh2: "04_earthcloudmap.jpg",
     size: 1.25,
     color1: 0x0088ff,
     color2: 0x000000,
