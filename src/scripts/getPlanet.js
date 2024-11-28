@@ -3,11 +3,15 @@ import * as THREE from "three";
 import { getFresnelMat } from "./getFresnelMat.js";
 import { vertexShader } from "../shaders/planetVertex.glsl.js";
 import { fragmentShader } from "../shaders/planetFragment.glsl.js";
+import { vertexPars } from "../shaders/vertex_pars.glsl.js";
+import { vertexMain } from "../shaders/vertex_main.glsl.js";
+import { fragmentMain } from "../shaders/fragment_main.glsl.js";
+import { fragmentPars } from "../shaders/fragment_pars.glsl.js";
 
 // import { getPlanetShader } from "./getPlanetShader.js";
 
 const texLoader = new THREE.TextureLoader();
-const geo = new THREE.IcosahedronGeometry(1, 16);
+const geo = new THREE.IcosahedronGeometry(1, 200);
 
 function getPlanet({
   children = [],
@@ -30,12 +34,29 @@ function getPlanet({
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-      uTime: { value: 0.0 },
-    },
+  const planetMat = new THREE.MeshPhongMaterial({
+    onBeforeCompile: (shader) => {
+      planetMat.userData.shader = shader;
+
+      shader.uniforms.uTime = { value: 0.0 };
+
+      const parsVertexString = /* glsl */`#include <displacementmap_pars_vertex>`;
+      shader.vertexShader = shader.vertexShader.replace(parsVertexString,
+        parsVertexString + vertexPars)
+      
+      const mainVertexString = /* glsl */`#include <displacementmap_vertex>`;
+      shader.vertexShader = shader.vertexShader.replace(mainVertexString,
+        mainVertexString + vertexMain)
+      
+      const mainFragmentString = /* glsl */`#include <normal_fragment_maps>`
+      const parsFragmentString = /* glsl */`#include <bumpmap_pars_fragment>`
+      shader.fragmentShader = shader.fragmentShader.replace(parsFragmentString,
+        parsFragmentString + fragmentPars);
+      shader.fragmentShader = shader.fragmentShader.replace(mainFragmentString,
+        mainFragmentString + fragmentMain);
+
+      console.log(shader.fragmentShader);
+    }
   });
 
   const planet = new THREE.Mesh(geo, planetMat);

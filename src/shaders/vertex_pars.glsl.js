@@ -1,14 +1,9 @@
-const vertexShader = /* glsl */`
+const vertexPars = /* glsl */`
 uniform float uTime;
 
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying vec2 vUv;
 varying float vDisplacement;
 
-#define PI 3.14159265359
-
-//	Classic Perlin 3D Noise 
+//	Classic Perlin 3D Noise
 //	by Stefan Gustavson
 //
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -79,7 +74,7 @@ float noise(vec3 P){
   vec3 fade_xyz = fade(Pf0);
   vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);
   vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);
-  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); 
+  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
   return 2.2 * n_xyz;
 }
 
@@ -98,23 +93,6 @@ float fit(float unscaled, float originalMin, float originalMax, float minAllowed
 float wave (vec3 position) {
     return fit(smoothMod(position.y * 6.0, 1., 1.5), 0.35, 0.6, 0.0, 1.0);
 }
+`;
 
-void main() {
-    vec3 coords =  normal;
-    coords.y += uTime;
-    vec3 noisePattern = vec3(noise(coords));
-    float pattern = wave(noisePattern);
-
-    vPosition = position;
-    vNormal = normal;
-    vUv = uv;
-    vDisplacement = pattern;
-
-    float displacement = vDisplacement / 4.;
-    vec3 newPosition = position + normal * displacement;
-    vec4 modelViewPosition = modelViewMatrix * vec4(newPosition, 1.0);
-    vec4 projectedPosition = projectionMatrix * modelViewPosition;
-    gl_Position = projectedPosition;
-}`;
-
-export { vertexShader };
+export { vertexPars };

@@ -8,7 +8,7 @@ import getStarfield from "./getStarfield.js";
 import getPlanet from "./getPlanet.js";
 import getAsteroidBelt from "./getAsteroidBelt.js";
 import getElipticLines from "./getElipticLines.js";
-import cubeTexture from "./background.js"
+import cubeTexture from "./background.js";
 import "../styles/main.scss";
 
 const w = window.innerWidth;
@@ -72,45 +72,45 @@ function initScene(data) {
 
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
 
-  function triggerImpact(planet, position, duration = 3.0) {
-    const shaderMaterial = planet.material;
-    if (!(shaderMaterial instanceof THREE.ShaderMaterial)) {
-      return;
-    }
+  // function triggerImpact(planet, position, duration = 3.0) {
+  //   const shaderMaterial = planet.material;
+  //   if (!(shaderMaterial instanceof THREE.ShaderMaterial)) {
+  //     return;
+  //   }
 
-    const planetRadius = planet.scale.x;
-    shaderMaterial.uniforms.impactPosition.value.copy(position);
-    shaderMaterial.uniforms.impactRadius.value = 0.0;
+  //   const planetRadius = planet.scale.x;
+  //   shaderMaterial.uniforms.impactPosition.value.copy(position);
+  //   shaderMaterial.uniforms.impactRadius.value = 0.0;
 
-    const start = Date.now();
-    const interval = setInterval(() => {
-      const elapsed = (Date.now() - start) / 1000; // Tempo decorrido em segundos
-      const t = Math.min(elapsed / duration, 1.0); // Progresso da animação (0 a 1)
+  //   const start = Date.now();
+  //   const interval = setInterval(() => {
+  //     const elapsed = (Date.now() - start) / 1000; // Tempo decorrido em segundos
+  //     const t = Math.min(elapsed / duration, 1.0); // Progresso da animação (0 a 1)
 
-      shaderMaterial.uniforms.impactRadius.value = (t * planetRadius) * 1.3;
+  //     shaderMaterial.uniforms.impactRadius.value = (t * planetRadius) * 1.3;
 
-      if (t >= 1.0) {
-        clearInterval(interval);
-      }
-    }, 16); // Atualiza ~60fps
-  }
-  console.log("Tipo de material:", planet.material.constructor.name);
+  //     if (t >= 1.0) {
+  //       clearInterval(interval);
+  //     }
+  //   }, 16); // Atualiza ~60fps
+  // }
+  // console.log("Tipo de material:", planet.material.constructor.name);
 
-  function toLocalSpace(object, position) {
-    const localPosition = position.clone();
-    object.worldToLocal(localPosition);
-    return localPosition;
-  }
+  // function toLocalSpace(object, position) {
+  //   const localPosition = position.clone();
+  //   object.worldToLocal(localPosition);
+  //   return localPosition;
+  // }
 
-  // Exemplo de uso
-  const globalImpactPosition = new THREE.Vector3(0.5, 0.5, 0.0); // Global
-  const localImpactPosition = toLocalSpace(planet, globalImpactPosition);
-  console.log("Global impact position:", globalImpactPosition);
-  console.log("Local impact position:", localImpactPosition);
+  // // Exemplo de uso
+  // const globalImpactPosition = new THREE.Vector3(0.5, 0.5, 0.0); // Global
+  // const localImpactPosition = toLocalSpace(planet, globalImpactPosition);
+  // console.log("Global impact position:", globalImpactPosition);
+  // console.log("Local impact position:", localImpactPosition);
 
-  setTimeout(() => {
-    triggerImpact(planet, localImpactPosition, 1.0, 3.0);
-  }, 2000);
+  // setTimeout(() => {
+  //   triggerImpact(planet, localImpactPosition, 1.0, 3.0);
+  // }, 2000);
 
   // const mars = getPlanet({ size: 0.15, distance: 2.25, img: "mars.png" });
   // solarSystem.add(mars);
@@ -204,7 +204,7 @@ function initScene(data) {
     }
 
     if (planetMat && planetMat.uniforms) {
-      planetMat.uniforms.uTime.value = time * 0.4;
+      planetMat.userdata.shader.uniforms.uTime.value = time * 0.4;
     }
 
   }
