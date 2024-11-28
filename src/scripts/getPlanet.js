@@ -34,7 +34,7 @@ function getPlanet({
     vertexShader,
     fragmentShader,
     uniforms: {
-      uTime: { value: 0.0 }, // Mesmo que não seja usado agora
+      uTime: { value: 0.0 },
     },
   });
 
@@ -75,13 +75,13 @@ function getPlanet({
     console.log(mesh2)
   }
 
-  const planetRimMat = getFresnelMat({
-    rimHex: color1,
-    facingHex: color2,
-  });
-  const planetRimMesh = new THREE.Mesh(geo, planetRimMat);
-  planetRimMesh.scale.setScalar(1.01);
-  planet.add(planetRimMesh);
+  // const planetRimMat = getFresnelMat({
+  //   rimHex: color1,
+  //   facingHex: color2,
+  // });
+  // const planetRimMesh = new THREE.Mesh(geo, planetRimMat);
+  // planetRimMesh.scale.setScalar(1.01);
+  // planet.add(planetRimMesh);
 
   children.forEach((child) => {
     child.position.x = Math.cos(startAngle) * distance;

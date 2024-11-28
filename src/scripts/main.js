@@ -57,8 +57,8 @@ function initScene(data) {
     // mesh1: "03_earthlights1k.jpg",
     // mesh2: "04_earthcloudmap.jpg",
     size: 1.25,
-    color1: 0x0088ff,
-    color2: 0x000000,
+    // color1: 0x0088ff,
+    // color2: 0x000000,
     specularMap: "02_earthspec1k.jpg",
     bumpMap: "01_earthbump1k.jpg",
     bumpScale: 0.05,
@@ -67,6 +67,8 @@ function initScene(data) {
     // damageTexture: "earth_damaged.jpg",
   });
   solarSystem.add(earth);
+
+  const planetMat = earth.children.find((child) => child instanceof THREE.Mesh).material;
 
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
 
@@ -191,6 +193,7 @@ function initScene(data) {
     solarSystem.userData.update(time);
 
     renderer.render(scene, camera);
+
     if (useAnimatedCamera) {
       camera.position.x = Math.cos(time * 0.75) * cameraDistance;
       camera.position.y = Math.cos(time * 0.75);
@@ -199,6 +202,11 @@ function initScene(data) {
     } else {
       controls.update();
     }
+
+    if (planetMat && planetMat.uniforms) {
+      planetMat.uniforms.uTime.value = time * 0.4;
+    }
+
   }
 
   animate();
