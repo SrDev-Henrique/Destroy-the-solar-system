@@ -68,13 +68,6 @@ function initScene(data) {
   });
   solarSystem.add(earth);
 
-  earth.traverse((node) => {
-    if (node.isMesh) {
-      const tex = node.material.map;
-      if (tex) tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    }
-  });
-
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
 
   function triggerImpact(planet, position, duration = 3.0) {

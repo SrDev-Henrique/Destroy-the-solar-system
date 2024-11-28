@@ -7,7 +7,6 @@ function getPlanetShader({ baseTexture, damageTexture }) {
       damageMap: { value: damageTexture || baseTexture },
       impactPosition: { value: new THREE.Vector3(0, 0, 0) },
       impactRadius: { value: 0.0 },
-      ...THREE.UniformsLib['lights'], // Include lighting uniforms
     },
     vertexShader: `
       varying vec3 vPosition;
@@ -32,9 +31,6 @@ function getPlanetShader({ baseTexture, damageTexture }) {
       varying vec2 vUv;
       varying vec3 vNormal;
 
-      ${THREE.ShaderChunk['common']}
-      ${THREE.ShaderChunk['lights_pars_begin']} // Inclui funções de iluminação
-
       void main() {
           // Distância para o impacto (efeito de dano)
           float dist = distance(vPosition, impactPosition);
@@ -47,36 +43,9 @@ function getPlanetShader({ baseTexture, damageTexture }) {
           // Misturando as cores
           vec4 finalColor = mix(baseColor, damageColor, mask);
 
-          // Adicionando iluminação (Phong Shading)
-          vec3 normal = normalize(vNormal); // Normal da superfície
-          vec3 light = vec3(0.0);
-
-          // Calculate directional lighting
-          #if NUM_DIR_LIGHTS > 0
-          for (int i = 0; i < NUM_DIR_LIGHTS; i++) {
-              vec3 lightDir = normalize(directionalLights[i].direction);
-              float diff = max(dot(normal, lightDir), 0.0);
-              light += diff * directionalLights[i].color;
-          }
-          #endif
-
-          // Calculate point lighting
-          #if NUM_POINT_LIGHTS > 0
-          for (int i = 0; i < NUM_POINT_LIGHTS; i++) {
-              vec3 lightDir = normalize((viewMatrix * vec4(pointLights[i].position, 1.0)).xyz - vPosition);
-              float diff = max(dot(normal, lightDir), 0.0);
-              light += diff * pointLights[i].color;
-          }
-          #endif
-
-          // Calculate ambient lighting
-          light += ambientLightColor;
-
-          vec3 diffuse = light * finalColor.rgb; // Cor modulada pela difusão
-          gl_FragColor = vec4(diffuse, finalColor.a);
+          gl_FragColor = vec4(finalColor.rgb, 1.0);
       }
     `,
-    lights: true,
     transparent: true,
   });
 }
