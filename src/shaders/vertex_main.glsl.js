@@ -1,5 +1,7 @@
 const vertexMain = /* glsl */ `
 
+vUv = uv;
+
 vec3 coords =  normal;
 coords.y += uTime;
 

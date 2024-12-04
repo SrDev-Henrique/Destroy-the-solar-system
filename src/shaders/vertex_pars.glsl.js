@@ -4,6 +4,7 @@ uniform float uCloudOffset;
 
 varying vec3 vCloudPosition;
 varying float vDisplacement;
+varying vec2 vUv;
 
 //	Classic Perlin 3D Noise
 //	by Stefan Gustavson

@@ -1,7 +1,9 @@
 const fragmentPars = /* glsl */ `
 uniform float uTime;
+uniform sampler2D uTexture;
 
 varying float vDisplacement;
+varying vec2 vUv;
 
 vec4 permute(vec4 x) {
     return mod((x * 34.0) + 1.0, 289.0);

@@ -32,6 +32,8 @@ function getPlanet({
   const orbitGroup = new THREE.Group();
   orbitGroup.rotation.y = (Math.PI * 1.5) * 180 / 2;
 
+  const planetTexture = texLoader.load('./textures/ShaderTest/teste.webp')
+
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
   const planetMat = new THREE.MeshPhongMaterial({
@@ -40,6 +42,7 @@ function getPlanet({
 
       shader.uniforms.uTime = { value: 0.0 };
       shader.uniforms.uCloudOffset = { value: 0.0 };
+      shader.uniforms.uTexture = { value: planetTexture };
 
       const parsVertexString = /* glsl */`#include <displacementmap_pars_vertex>`;
       shader.vertexShader = shader.vertexShader.replace(parsVertexString,
