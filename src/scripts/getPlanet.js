@@ -39,6 +39,7 @@ function getPlanet({
       planetMat.userData.shader = shader;
 
       shader.uniforms.uTime = { value: 0.0 };
+      shader.uniforms.uCloudOffset = { value: 0.0 };
 
       const parsVertexString = /* glsl */`#include <displacementmap_pars_vertex>`;
       shader.vertexShader = shader.vertexShader.replace(parsVertexString,
@@ -55,7 +56,7 @@ function getPlanet({
       shader.fragmentShader = shader.fragmentShader.replace(mainFragmentString,
         mainFragmentString + fragmentMain);
 
-      console.log(shader.fragmentShader);
+      console.log(shader.uniforms);
     }
   });
 

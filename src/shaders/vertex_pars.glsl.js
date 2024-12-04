@@ -1,6 +1,8 @@
-const vertexPars = /* glsl */`
+const vertexPars = /* glsl */ `
 uniform float uTime;
+uniform float uCloudOffset;
 
+varying vec3 vCloudPosition;
 varying float vDisplacement;
 
 //	Classic Perlin 3D Noise
