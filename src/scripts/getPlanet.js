@@ -36,7 +36,7 @@ function getPlanet({
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.MeshPhongMaterial({
+  const planetMat = new THREE.MeshStandardMaterial({
     onBeforeCompile: (shader) => {
       planetMat.userData.shader = shader;
 
@@ -52,14 +52,39 @@ function getPlanet({
       shader.vertexShader = shader.vertexShader.replace(mainVertexString,
         mainVertexString + vertexMain)
       
-      const mainFragmentString = /* glsl */`#include <normal_fragment_maps>`
-      const parsFragmentString = /* glsl */`#include <bumpmap_pars_fragment>`
-      shader.fragmentShader = shader.fragmentShader.replace(parsFragmentString,
-        parsFragmentString + fragmentPars);
-      shader.fragmentShader = shader.fragmentShader.replace(mainFragmentString,
-        mainFragmentString + fragmentMain);
+      // const parsFragmentString = /* glsl */ `#include <normalmap_pars_fragment>`;
+      // shader.fragmentShader = shader.fragmentShader.replace(
+      //   parsFragmentString,
+      //   parsFragmentString + fragmentPars
+      // );
 
-      console.log(shader.uniforms);
+      // const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
+      // shader.fragmentShader = shader.fragmentShader.replace(
+      //   mainFragmentString,
+      //   mainFragmentString + fragmentMain
+      // );
+
+      // const colorParsString = /* glsl */ `#include <color_pars_fragment>`;
+      // shader.fragmentShader = shader.fragmentShader.replace(
+      //   colorParsString,
+      //   colorParsString +
+      //     `
+      //     uniform vec3 customColor;
+      //   `
+      // );
+
+      // const colorFragmentString = /* glsl */ `#include <color_fragment>`;
+      // shader.fragmentShader = shader.fragmentShader.replace(
+      //   colorFragmentString,
+      //   colorFragmentString +
+      //     `
+      //     diffuseColor.rgb *= customColor;
+      //   `
+      // );
+
+      // shader.uniforms.customColor = { value: new THREE.Color(0xff0000) };
+
+      console.log(shader.fragmentShader);
     }
   });
 
@@ -80,7 +105,6 @@ function getPlanet({
     firstMesh.scale.setScalar(1.001);
     firstMesh.renderOrder = 1;
     planet.add(firstMesh);
-    console.log(mesh1)
   }
 
   if (mesh2) {
@@ -97,16 +121,15 @@ function getPlanet({
     secondMesh.scale.setScalar(1.003);
     secondMesh.renderOrder = 2;
     planet.add(secondMesh);
-    console.log(mesh2)
   }
 
-  // const planetRimMat = getFresnelMat({
-  //   rimHex: color1,
-  //   facingHex: color2,
-  // });
-  // const planetRimMesh = new THREE.Mesh(geo, planetRimMat);
-  // planetRimMesh.scale.setScalar(1.01);
-  // planet.add(planetRimMesh);
+  const planetRimMat = getFresnelMat({
+    rimHex: color1,
+    facingHex: color2,
+  });
+  const planetRimMesh = new THREE.Mesh(geo, planetRimMat);
+  planetRimMesh.scale.setScalar(1.01);
+  planet.add(planetRimMesh);
 
   children.forEach((child) => {
     child.position.x = Math.cos(startAngle) * distance;

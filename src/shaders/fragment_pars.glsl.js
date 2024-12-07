@@ -104,6 +104,8 @@ vec3 getPlanetColor(float displacement) {
     lavaColor = mix(lavaColor, vec3(1.0, 0.5, 0.0), displacement);
     return mix(baseColor, lavaColor, step(0.5, displacement));
 }
+
+#include <normalmap_pars_fragment>
 `;
 
 export { fragmentPars };

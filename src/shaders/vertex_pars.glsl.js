@@ -6,6 +6,8 @@ varying vec3 vCloudPosition;
 varying float vDisplacement;
 varying vec2 vUv;
 
+#include <displacementmap_pars_vertex>
+
 //	Classic Perlin 3D Noise
 //	by Stefan Gustavson
 //
