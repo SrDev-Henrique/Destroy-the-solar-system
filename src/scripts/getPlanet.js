@@ -55,17 +55,17 @@ function getPlanet({
       shader.vertexShader = shader.vertexShader.replace(mainVertexString,
         mainVertexString + vertexMain)
       
-      // const parsFragmentString = /* glsl */ `#include <normalmap_pars_fragment>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   parsFragmentString,
-      //   parsFragmentString + fragmentPars
-      // );
+      const parsFragmentString = /* glsl */ `#include <normalmap_pars_fragment>`;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        parsFragmentString,
+        parsFragmentString + fragmentPars
+      );
 
-      // const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   mainFragmentString,
-      //   mainFragmentString + fragmentMain
-      // );
+      const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        mainFragmentString,
+        mainFragmentString + fragmentMain
+      );
 
       // const colorParsString = /* glsl */ `#include <color_pars_fragment>`;
       // shader.fragmentShader = shader.fragmentShader.replace(
