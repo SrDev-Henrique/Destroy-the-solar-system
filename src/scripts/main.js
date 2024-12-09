@@ -61,7 +61,7 @@ function initScene(data) {
     color2: 0x000000,
     specularMap: "02_earthspec1k.jpg",
     bumpMap: "01_earthbump1k.jpg",
-    bumpScale: 0.05,
+    bumpScale: 0.5,
     alphaMap: "05_earthcloudmaptrans.jpg",
     shininess: 10,
     // damageTexture: "earth_damaged.jpg",

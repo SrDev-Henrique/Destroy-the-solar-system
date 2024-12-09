@@ -36,60 +36,60 @@ function getPlanet({
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.MeshPhongMaterial({
-    map,
-    specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
-    bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
-    onBeforeCompile: (shader) => {
-      planetMat.userData.shader = shader;
-
-      shader.uniforms.uTime = { value: 0.0 };
-      shader.uniforms.uCloudOffset = { value: 0.0 };
-      shader.uniforms.uTexture = { value: planetTexture };
-
-      const parsVertexString = /* glsl */`#include <displacementmap_pars_vertex>`;
-      shader.vertexShader = shader.vertexShader.replace(parsVertexString,
-        parsVertexString + vertexPars)
-      
-      const mainVertexString = /* glsl */`#include <displacementmap_vertex>`;
-      shader.vertexShader = shader.vertexShader.replace(mainVertexString,
-        mainVertexString + vertexMain)
-      
-      const parsFragmentString = /* glsl */ `#include <normalmap_pars_fragment>`;
-      shader.fragmentShader = shader.fragmentShader.replace(
-        parsFragmentString,
-        parsFragmentString + fragmentPars
-      );
-
-      const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
-      shader.fragmentShader = shader.fragmentShader.replace(
-        mainFragmentString,
-        mainFragmentString + fragmentMain
-      );
-
-      // const colorParsString = /* glsl */ `#include <color_pars_fragment>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   colorParsString,
-      //   colorParsString +
-      //     `
-      //     uniform vec3 customColor;
-      //   `
-      // );
-
-      // const colorFragmentString = /* glsl */ `#include <color_fragment>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   colorFragmentString,
-      //   colorFragmentString +
-      //     `
-      //     diffuseColor.rgb *= customColor;
-      //   `
-      // );
-
-      // shader.uniforms.customColor = { value: new THREE.Color(0xff0000) };
-
-      console.log(shader.fragmentShader);
-    }
+  const planetMat = new THREE.MeshPhysicalMaterial({
+    // specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
+    // bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
   });
+
+  const onBeforeCompile = function (shader) {
+    shader.uniforms.uTime = { value: 0.0 };
+
+    shader.vertexShader = shader.vertexShader.replace(
+      `#include <uv_pars_vertex>`,
+      `varying vec2 vUv;
+            uniform float uTime;`
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+      `#include <uv_vertex>`,
+      `vUv = uv;`
+    );
+
+    shader.vertexShader = shader.vertexShader.replace(
+      `#include <begin_vertex>`,
+      `float delta = abs(sin(uTime + position.y / 20.0)) / 4.0;
+            mat3 m = mat3(1, 0, 0, 0, 1.0 + delta, 0, 0, 0, 1);
+            vec3 transformed = vec3(position) * m;
+            vNormal = vNormal * m;`
+    );
+
+    shader.fragmentShader = shader.fragmentShader.replace(
+      `varying vec3 vViewPosition;`,
+      `varying vec3 vViewPosition;
+            varying vec2 vUv;
+            uniform float uTime;`
+    );
+
+    shader.fragmentShader = shader.fragmentShader.replace(
+      `#include <map_fragment>`,
+      `if ((sin(100.0 * vUv.y + 5.0 * uTime + 3.14159 * 20.0 * vUv.x) > 0.0)
+                || (vUv.y > 0.94 && vUv.y < 0.95) || (vUv.y > 0.05 && vUv.y < 0.06)) {
+                diffuseColor = vec4(0.6, 0.6, 0.6, 1.0);
+                
+                float magic = abs(sin(9.0 * vUv.y + 2.0 * uTime + 3.14159 * vUv.x));
+                
+                if ((magic < 0.3)) {
+                    diffuseColor = vec4(1.0);
+                }
+            } else {
+                diffuseColor = vec4(0.0);
+            }`
+    );
+
+    this.userData.shader = shader;
+  };
+
+  planetMat.onBeforeCompile = onBeforeCompile;
 
   const planet = new THREE.Mesh(geo, planetMat);
   planet.scale.setScalar(size);
