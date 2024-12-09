@@ -1,4 +1,7 @@
 const vertexPars = /* glsl */ `
+#include <fog_pars_vertex>
+#include <shadowmap_pars_vertex>
+
 uniform float uTime;
 uniform float uCloudOffset;
 
