@@ -13,6 +13,8 @@ vec4 sampledTexture = texture(uTexture, vUv); // 'vUv' precisa ser passado do ve
 vec3 planetColor = getPlanetColor(vDisplacement);
 vec3 finalColor = mix(planetColor, sampledTexture.rgb, 0.5); // Mistura com a cor do planeta
 gl_FragColor = vec4(finalColor, 1.0);
+
+#include <normal_fragment_maps>
 `;
 
 export { fragmentMain };
