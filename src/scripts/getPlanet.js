@@ -36,7 +36,10 @@ function getPlanet({
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.MeshStandardMaterial({
+  const planetMat = new THREE.MeshPhongMaterial({
+    map,
+    specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
+    bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
     onBeforeCompile: (shader) => {
       planetMat.userData.shader = shader;
 
@@ -44,7 +47,8 @@ function getPlanet({
       shader.uniforms.uCloudOffset = { value: 0.0 };
       shader.uniforms.uTexture = { value: planetTexture };
 
-      const parsVertexString = /* glsl */`#include <displacementmap_pars_vertex>`;
+      const parsVertexString = /* glsl */ `
+      #include <displacementmap_pars_vertex>`;
       shader.vertexShader = shader.vertexShader.replace(parsVertexString,
         parsVertexString + vertexPars)
       
@@ -52,17 +56,18 @@ function getPlanet({
       shader.vertexShader = shader.vertexShader.replace(mainVertexString,
         mainVertexString + vertexMain)
       
-      // const parsFragmentString = /* glsl */ `#include <normalmap_pars_fragment>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   parsFragmentString,
-      //   parsFragmentString + fragmentPars
-      // );
+      const parsFragmentString = /* glsl */ `
+      #include <normalmap_pars_fragment>`;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        parsFragmentString,
+        parsFragmentString + fragmentPars
+      );
 
-      // const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
-      // shader.fragmentShader = shader.fragmentShader.replace(
-      //   mainFragmentString,
-      //   mainFragmentString + fragmentMain
-      // );
+      const mainFragmentString = /* glsl */ `#include <normal_fragment_maps>`;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        mainFragmentString,
+        mainFragmentString + fragmentMain
+      );
 
       // const colorParsString = /* glsl */ `#include <color_pars_fragment>`;
       // shader.fragmentShader = shader.fragmentShader.replace(
@@ -84,7 +89,8 @@ function getPlanet({
 
       // shader.uniforms.customColor = { value: new THREE.Color(0xff0000) };
 
-      console.log(shader.fragmentShader);
+      console.log("Vertex Shader:", shader.vertexShader);
+      console.log("Fragment Shader:", shader.fragmentShader);
     }
   });
 

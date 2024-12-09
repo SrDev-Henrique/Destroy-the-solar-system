@@ -203,9 +203,9 @@ function initScene(data) {
       controls.update();
     }
 
-    if (planetMat && planetMat.uniforms) {
-      planetMat.userdata.shader.uniforms.uTime.value = time * 0.4;
-    }
+    // if (planetMat && planetMat.uniforms) {
+    //   planetMat.userdata.shader.uniforms.uTime.value = time * 0.4;
+    // }
 
   }
 

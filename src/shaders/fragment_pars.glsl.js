@@ -1,8 +1,4 @@
 const fragmentPars = /* glsl */ `
-#include <map_pars_fragment>
-#include <roughnessmap_pars_fragment>
-#include <normalmap_pars_fragment>
-#include <fog_pars_fragment>
 
 uniform float uTime;
 uniform sampler2D uTexture;

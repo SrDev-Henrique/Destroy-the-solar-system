@@ -1,6 +1,4 @@
 const vertexPars = /* glsl */ `
-#include <fog_pars_vertex>
-#include <shadowmap_pars_vertex>
 
 uniform float uTime;
 uniform float uCloudOffset;
@@ -8,8 +6,6 @@ uniform float uCloudOffset;
 varying vec3 vCloudPosition;
 varying float vDisplacement;
 varying vec2 vUv;
-
-#include <displacementmap_pars_vertex>
 
 //	Classic Perlin 3D Noise
 //	by Stefan Gustavson
