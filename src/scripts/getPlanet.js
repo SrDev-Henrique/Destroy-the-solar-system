@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as THREE from "three";
 import { getFresnelMat } from "./getFresnelMat.js";
@@ -22,7 +23,7 @@ function getPlanet({
   size = 1,
   color1 = 0xffffff,
   color2 = 0x000000,
-  // damageTexture = "", 
+  // damageTexture = "",
   specularMap = "",
   bumpMap = "",
   bumpScale = 0.0,
@@ -30,63 +31,48 @@ function getPlanet({
   shininess = 0,
 }) {
   const orbitGroup = new THREE.Group();
-  orbitGroup.rotation.y = (Math.PI * 1.5) * 180 / 2;
+  orbitGroup.rotation.y = (Math.PI * 1.5 * 180) / 2;
 
-  const planetTexture = texLoader.load('./textures/ShaderTest/teste.webp')
+  const planetTexture = texLoader.load("./textures/ShaderTest/teste1.jpg");
 
   const path = `./textures/${img}`;
   const map = texLoader.load(path);
-  const planetMat = new THREE.MeshPhysicalMaterial({
-    // specularMap: specularMap ? texLoader.load(`./textures/specular-map/${specularMap}`) : null,
-    // bumpMap: bumpMap ? texLoader.load(`./textures/bump-map/${bumpMap}`) : null,
+  const planetMat = new THREE.MeshStandardMaterial({
   });
 
-  const onBeforeCompile = function (shader) {
-    shader.uniforms.uTime = { value: 0.0 };
+  const onBeforeCompile = function(shader) {
+    shader.uniforms.uCustomTexture = { value: map };
 
-    shader.vertexShader = shader.vertexShader.replace(
-      `#include <uv_pars_vertex>`,
-      `varying vec2 vUv;
-            uniform float uTime;`
-    );
+  // Adicionando `vUv` ao vertex shader
+  shader.vertexShader = shader.vertexShader.replace(
+    `#include <uv_pars_vertex>`,
+    `#include <uv_pars_vertex>
+     varying vec2 vUv;`
+  );
 
-    shader.vertexShader = shader.vertexShader.replace(
-      `#include <uv_vertex>`,
-      `vUv = uv;`
-    );
+  shader.vertexShader = shader.vertexShader.replace(
+    `#include <uv_vertex>`,
+    `#include <uv_vertex>
+     vUv = uv;`
+  );
 
-    shader.vertexShader = shader.vertexShader.replace(
-      `#include <begin_vertex>`,
-      `float delta = abs(sin(uTime + position.y / 20.0)) / 4.0;
-            mat3 m = mat3(1, 0, 0, 0, 1.0 + delta, 0, 0, 0, 1);
-            vec3 transformed = vec3(position) * m;
-            vNormal = vNormal * m;`
-    );
+  // Adicionando `vUv` e lógica no fragment shader
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `#include <map_pars_fragment>`,
+    `#include <map_pars_fragment>
+     uniform sampler2D uCustomTexture;
+     varying vec2 vUv;`
+  );
 
-    shader.fragmentShader = shader.fragmentShader.replace(
-      `varying vec3 vViewPosition;`,
-      `varying vec3 vViewPosition;
-            varying vec2 vUv;
-            uniform float uTime;`
-    );
+  shader.fragmentShader = shader.fragmentShader.replace(
+    `#include <map_fragment>`,
+    `#include <map_fragment>
+     vec4 baseColor = texture2D(uCustomTexture, vUv);
+     diffuseColor = baseColor;`
+  );
 
-    shader.fragmentShader = shader.fragmentShader.replace(
-      `#include <map_fragment>`,
-      `if ((sin(100.0 * vUv.y + 5.0 * uTime + 3.14159 * 20.0 * vUv.x) > 0.0)
-                || (vUv.y > 0.94 && vUv.y < 0.95) || (vUv.y > 0.05 && vUv.y < 0.06)) {
-                diffuseColor = vec4(0.6, 0.6, 0.6, 1.0);
-                
-                float magic = abs(sin(9.0 * vUv.y + 2.0 * uTime + 3.14159 * vUv.x));
-                
-                if ((magic < 0.3)) {
-                    diffuseColor = vec4(1.0);
-                }
-            } else {
-                diffuseColor = vec4(0.0);
-            }`
-    );
+  this.userData.shader = shader;
 
-    this.userData.shader = shader;
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;
