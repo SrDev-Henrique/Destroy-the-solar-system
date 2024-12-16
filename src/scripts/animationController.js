@@ -1,8 +1,9 @@
 const AnimationController = {
   time: 0,
-  update(delta) {
-    this.time += delta;
-  },
+  update(t) {
+    this.time += t;
+    },
 };
+console.log(AnimationController.time);
 
 export default AnimationController;

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as THREE from "three";
 import { getFresnelMat } from "./getFresnelMat.js";
@@ -8,6 +7,7 @@ import { vertexPars } from "../shaders/vertex_pars.glsl.js";
 import { vertexMain } from "../shaders/vertex_main.glsl.js";
 import { fragmentMain } from "../shaders/fragment_main.glsl.js";
 import { fragmentPars } from "../shaders/fragment_pars.glsl.js";
+import AnimationController from "./animationController.js";
 
 // import { getPlanetShader } from "./getPlanetShader.js";
 
@@ -40,7 +40,7 @@ function getPlanet({
   const planetMat = new THREE.MeshStandardMaterial({});
 
   const onBeforeCompile = function (shader) {
-    shader.uniforms.iTime = { value: 0.0 };
+    shader.uniforms.iTime = { value: AnimationController.time };
 
     shader.vertexShader = shader.vertexShader.replace(
       `#include <uv_pars_vertex>`,
@@ -124,7 +124,9 @@ function getPlanet({
     `
     );
 
-    planetShader = shader;
+    shader.onBeforeRender = function () {
+      shader.uniforms.iTime.value = AnimationController.time;
+    }
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;

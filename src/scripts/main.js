@@ -9,6 +9,7 @@ import getPlanet from "./getPlanet.js";
 import getAsteroidBelt from "./getAsteroidBelt.js";
 import getElipticLines from "./getElipticLines.js";
 import cubeTexture from "./background.js";
+import AnimationController from "./animationController.js";
 import "../styles/main.scss";
 
 const w = window.innerWidth;
@@ -70,7 +71,9 @@ function initScene(data) {
 
   let planetShader;
 
-  const planetMat = earth.children.find((child) => child instanceof THREE.Mesh).material;
+  const planetMat = earth.children.find(
+    (child) => child instanceof THREE.Mesh
+  ).material;
 
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
 
@@ -193,6 +196,7 @@ function initScene(data) {
     const time = t * 0.0002;
     requestAnimationFrame(animate);
     solarSystem.userData.update(time);
+    AnimationController.update(t);
 
     if (planetShader) {
       planetShader.uniforms.iTime.value = time * 0.4;
@@ -212,9 +216,9 @@ function initScene(data) {
     // if (planetMat && planetMat.uniforms) {
     //   planetMat.userdata.shader.uniforms.uTime.value = time * 0.4;
     // }
-
   }
 
+  const clock = new THREE.Clock();
   animate();
 }
 
