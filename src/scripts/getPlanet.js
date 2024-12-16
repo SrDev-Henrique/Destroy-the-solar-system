@@ -124,7 +124,7 @@ function getPlanet({
     `
     );
 
-    this.userData.shader = shader;
+    planetShader = shader;
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;

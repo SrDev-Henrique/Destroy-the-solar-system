@@ -68,6 +68,8 @@ function initScene(data) {
   });
   solarSystem.add(earth);
 
+  let planetShader;
+
   const planetMat = earth.children.find((child) => child instanceof THREE.Mesh).material;
 
   let planet = earth.children.find((child) => child instanceof THREE.Mesh);
@@ -191,6 +193,10 @@ function initScene(data) {
     const time = t * 0.0002;
     requestAnimationFrame(animate);
     solarSystem.userData.update(time);
+
+    if (planetShader) {
+      planetShader.uniforms.iTime.value = time * 0.4;
+    }
 
     renderer.render(scene, camera);
 
