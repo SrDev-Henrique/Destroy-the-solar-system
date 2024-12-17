@@ -39,12 +39,8 @@ function getPlanet({
   const map = texLoader.load(path);
   const planetMat = new THREE.MeshStandardMaterial({});
 
-  let planetShader;
-
   const onBeforeCompile = function (shader) {
     shader.uniforms.iTime = { value: 0.0 };
-
-    planetShader = shader;
 
     shader.vertexShader = shader.vertexShader.replace(
       `#include <uv_pars_vertex>`,
@@ -130,8 +126,6 @@ function getPlanet({
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;
-
-  console.log(planetShader);
 
   const planet = new THREE.Mesh(geo, planetMat);
   planet.scale.setScalar(size);

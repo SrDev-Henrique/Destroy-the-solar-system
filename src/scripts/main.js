@@ -200,10 +200,6 @@ function initScene(data) {
     solarSystem.userData.update(time);
     AnimationController.update(t);
 
-    if (planetMat && planetMat.uniforms) {
-      planetMat.uniforms.iTime.value = time * 0.4;
-    }
-
     renderer.render(scene, camera);
 
     if (useAnimatedCamera) {
