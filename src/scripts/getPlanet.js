@@ -39,8 +39,12 @@ function getPlanet({
   const map = texLoader.load(path);
   const planetMat = new THREE.MeshStandardMaterial({});
 
+  let planetShader;
+
   const onBeforeCompile = function (shader) {
-    shader.uniforms.iTime = { value: AnimationController.time };
+    shader.uniforms.iTime = { value: 0.0 };
+
+    planetShader = shader;
 
     shader.vertexShader = shader.vertexShader.replace(
       `#include <uv_pars_vertex>`,
@@ -123,13 +127,11 @@ function getPlanet({
     gl_FragColor = vec4(col, 1.0);
     `
     );
-
-    shader.onBeforeRender = function () {
-      shader.uniforms.iTime.value = AnimationController.time;
-    }
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;
+
+  console.log(planetShader);
 
   const planet = new THREE.Mesh(geo, planetMat);
   planet.scale.setScalar(size);

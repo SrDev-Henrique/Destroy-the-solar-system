@@ -193,13 +193,15 @@ function initScene(data) {
 
   const cameraDistance = 5;
   function animate(t = 0) {
-    const time = t * 0.0002;
     requestAnimationFrame(animate);
+
+    const time = t * 0.0002;
+
     solarSystem.userData.update(time);
     AnimationController.update(t);
 
-    if (planetShader) {
-      planetShader.uniforms.iTime.value = time * 0.4;
+    if (planetMat && planetMat.uniforms) {
+      planetMat.uniforms.iTime.value = time * 0.4;
     }
 
     renderer.render(scene, camera);
@@ -218,9 +220,8 @@ function initScene(data) {
     // }
   }
 
-  const clock = new THREE.Clock();
   animate();
-}
+};
 
 const sceneData = {
   objs: [],
