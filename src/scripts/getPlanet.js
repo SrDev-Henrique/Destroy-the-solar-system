@@ -123,6 +123,8 @@ function getPlanet({
     gl_FragColor = vec4(col, 1.0);
     `
     );
+
+    this.userData.shader = shader;
   };
 
   planetMat.onBeforeCompile = onBeforeCompile;

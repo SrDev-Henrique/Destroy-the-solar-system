@@ -55,8 +55,8 @@ function initScene(data) {
     children: [moon],
     distance: 0,
     img: "earth.jpg",
-    mesh1: "03_earthlights1k.jpg",
-    mesh2: "04_earthcloudmap.jpg",
+    // mesh1: "03_earthlights1k.jpg",
+    // mesh2: "04_earthcloudmap.jpg",
     size: 1.25,
     color1: 0x0088ff,
     color2: 0x000000,
@@ -196,24 +196,23 @@ function initScene(data) {
     requestAnimationFrame(animate);
 
     const time = t * 0.0002;
+    const currentTime = performance.now() * 0.00007;
 
     solarSystem.userData.update(time);
-    AnimationController.update(t);
 
     renderer.render(scene, camera);
 
-    if (useAnimatedCamera) {
-      camera.position.x = Math.cos(time * 0.75) * cameraDistance;
-      camera.position.y = Math.cos(time * 0.75);
-      camera.position.z = Math.sin(time * 0.75) * cameraDistance;
-      camera.lookAt(0, 0, 0);
-    } else {
-      controls.update();
-    }
+    controls.update();
 
-    // if (planetMat && planetMat.uniforms) {
-    //   planetMat.userdata.shader.uniforms.uTime.value = time * 0.4;
-    // }
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        const shader = child.material.userData.shader;
+        if (shader) {
+          shader.uniforms.iTime.value = currentTime;
+          console.log(shader.uniforms.uTime);
+        }
+      }
+    });
   }
 
   animate();
