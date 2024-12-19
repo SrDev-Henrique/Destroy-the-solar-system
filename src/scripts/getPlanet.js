@@ -12,7 +12,7 @@ import AnimationController from "./animationController.js";
 // import { getPlanetShader } from "./getPlanetShader.js";
 
 const texLoader = new THREE.TextureLoader();
-const geo = new THREE.IcosahedronGeometry(1, 200);
+const geo = new THREE.SphereGeometry(1, 64, 64);
 
 function getPlanet({
   children = [],
@@ -43,85 +43,87 @@ function getPlanet({
     shader.uniforms.iTime = { value: 0.0 };
 
     shader.vertexShader = shader.vertexShader.replace(
-      `#include <uv_pars_vertex>`,
-      `#include <uv_pars_vertex>
-     varying vec2 vUv;`
+      `#include <common>`,
+      `#include <common>
+     varying vec3 vPos;`
     );
 
     shader.vertexShader = shader.vertexShader.replace(
-      `#include <uv_vertex>`,
-      `#include <uv_vertex>
-     vUv = uv;`
+      `#include <worldpos_vertex>`,
+      `#include <worldpos_vertex>
+     vPos = normalize(position);`
     );
 
     shader.fragmentShader = shader.fragmentShader.replace(
       `#include <common>`,
       `#include <common>
-    
-    uniform float iTime;
-    varying vec2 vUv;
+     uniform float iTime;
+     varying vec3 vPos;
 
-    // Matriz de rotação
-    mat2 rot(float a) {
-      return mat2(cos(a), sin(a), -sin(a), cos(a));
-    }
+     // Matriz de rotação
+     mat2 rot(float a) {
+       return mat2(cos(a), sin(a), -sin(a), cos(a));
+     }
 
-    // Função de hash
-    float hash21(vec2 n) {
-      return fract(cos(dot(n, vec2(5.9898, 4.1414))) * 65899.89956);
-    }
+     // Função de hash
+     float hash21(vec2 n) {
+       return fract(cos(dot(n, vec2(5.9898, 4.1414))) * 65899.89956);
+     }
 
-    // Função de ruído
-    float noise(vec2 n) {   
-      const vec2 d = vec2(0.0, 1.0);
-      vec2 b = floor(n);
-      vec2 f = smoothstep(vec2(0.), vec2(1), fract(n));
-      return mix(mix(hash21(b), hash21(b + d.yx), f.x), 
-                 mix(hash21(b + d.xy), hash21(b + d.yy), f.x), f.y);
-    }
+     // Função de ruído
+     float noise(vec2 n) {   
+       const vec2 d = vec2(0.0, 1.0);
+       vec2 b = floor(n);
+       vec2 f = smoothstep(vec2(0.), vec2(1), fract(n));
+       return mix(mix(hash21(b), hash21(b + d.yx), f.x), 
+                  mix(hash21(b + d.xy), hash21(b + d.yy), f.x), f.y);
+     }
 
-    // Mistura de ruído
-    vec2 mixNoise(vec2 p) {
-      float epsilon = .968785675;
-      float noiseX = noise(vec2(p.x + epsilon, p.y)) - noise(vec2(p.x - epsilon, p.y));
-      float noiseY = noise(vec2(p.x, p.y + epsilon)) - noise(vec2(p.x, p.y - epsilon));
-      return vec2(noiseX, noiseY);
-    }
+     // Mistura de ruído
+     vec2 mixNoise(vec2 p) {
+       float epsilon = .968785675;
+       float noiseX = noise(vec2(p.x + epsilon, p.y)) - noise(vec2(p.x - epsilon, p.y));
+       float noiseY = noise(vec2(p.x, p.y + epsilon)) - noise(vec2(p.x, p.y - epsilon));
+       return vec2(noiseX, noiseY);
+     }
 
-    // FBM (Fractal Brownian Motion)
-    float fbm(vec2 p) {
-      float amplitude = 3.0;
-      float total = 0.0;
-      vec2 pom = p;
-      for (float i = 1.3232; i < 7.45; i++) {
-        p += iTime * 0.05;
-        pom += iTime * 0.09;
-        vec2 n = mixNoise(i * p * 0.3244243 + iTime * 0.131321);
-        n *= rot(iTime * 0.5 - (0.03456 * p.x + 0.0342322 * p.y) * 50.0);
-        p += n * 0.5;
-        total += (sin(noise(p) * 8.5) * 0.55 + 0.4566) / amplitude;
+     // FBM (Fractal Brownian Motion)
+     float fbm(vec2 p) {
+       float amplitude = 3.0;
+       float total = 0.0;
+       vec2 pom = p;
+       for (float i = 1.3232; i < 7.45; i++) {
+         p += iTime * 0.05;
+         pom += iTime * 0.09;
+         vec2 n = mixNoise(i * p * 0.3244243 + iTime * 0.131321);
+         n *= rot(iTime * 0.5 - (0.03456 * p.x + 0.0342322 * p.y) * 50.0);
+         p += n * 0.5;
+         total += (sin(noise(p) * 8.5) * 0.55 + 0.4566) / amplitude;
 
-        p = mix(pom, p, 0.5);
-        amplitude *= 1.3;
-        p *= 2.007556;
-        pom *= 1.6895367;
-      }
-      return total;
-    }
-    `
+         p = mix(pom, p, 0.5);
+         amplitude *= 1.3;
+         p *= 2.007556;
+         pom *= 1.6895367;
+       }
+       return total;
+     }`
     );
 
     shader.fragmentShader = shader.fragmentShader.replace(
       `#include <dithering_fragment>`,
       `#include <dithering_fragment>
-    
-    vec2 uv = vUv;
-    uv.x *= 2.2; // Ajuste de zoom
-    float fbmValue = fbm(uv);
-    vec3 col = vec3(0.212, 0.08, 0.03) / max(fbmValue, 0.0001);
-    col = pow(col, vec3(1.5));
-    gl_FragColor = vec4(col, 1.0);
-    `
+
+     vec3 pos = normalize(vPos);
+     float theta = atan(pos.z, pos.x);
+     float phi = acos(pos.y);
+     vec2 uv = vec2(theta / (2.0 * 3.14159265359), phi / 3.14159265359);
+     uv.x = fract(uv.x);
+
+     uv.x *= 2.2; // Ajuste de zoom
+     float fbmValue = fbm(uv);
+     vec3 col = vec3(0.212, 0.08, 0.03) / max(fbmValue, 0.0001);
+     col = pow(col, vec3(1.5));
+     gl_FragColor = vec4(col, 1.0);`
     );
 
     this.userData.shader = shader;

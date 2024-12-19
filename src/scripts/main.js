@@ -58,13 +58,13 @@ function initScene(data) {
     // mesh1: "03_earthlights1k.jpg",
     // mesh2: "04_earthcloudmap.jpg",
     size: 1.25,
-    color1: 0x0088ff,
+    color1: 0x852000,
     color2: 0x000000,
-    specularMap: "02_earthspec1k.jpg",
-    bumpMap: "01_earthbump1k.jpg",
-    bumpScale: 0.5,
-    alphaMap: "05_earthcloudmaptrans.jpg",
-    shininess: 10,
+    // specularMap: "02_earthspec1k.jpg",
+    // bumpMap: "01_earthbump1k.jpg",
+    // bumpScale: 0.5,
+    // alphaMap: "05_earthcloudmaptrans.jpg",
+    // shininess: 10,
     // damageTexture: "earth_damaged.jpg",
   });
   solarSystem.add(earth);
@@ -196,7 +196,7 @@ function initScene(data) {
     requestAnimationFrame(animate);
 
     const time = t * 0.0002;
-    const currentTime = performance.now() * 0.00007;
+    const currentTime = performance.now() / 7000;
 
     solarSystem.userData.update(time);
 
