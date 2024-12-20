@@ -209,7 +209,6 @@ function initScene(data) {
         const shader = child.material.userData.shader;
         if (shader) {
           shader.uniforms.iTime.value = currentTime;
-          console.log(shader.uniforms.uTime);
         }
       }
     });
